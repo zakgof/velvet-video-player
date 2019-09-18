@@ -1,0 +1,40 @@
+plugins {
+    id 'java'
+    id "io.freefair.lombok" version "3.8.0"
+    id 'application'
+    id 'eclipse'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.beryx.jlink' version '2.12.0'
+}
+
+javafx {
+    version = "12.0.2"
+     modules = [ 'javafx.controls', 'javafx.swing' ]
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+sourceCompatibility = 12
+targetCompatibility = 12
+
+mainClassName = 'com.zakgof.velvetvideo.player.MainActr'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.github.zakgof:velvet-video:0.0.1'
+    implementation 'com.github.zakgof:velvet-video-natives:0.0.1.full'
+    implementation 'com.github.zakgof:actr:0.2.1'
+}
+
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    baseName = 'velvetvideoplayer'
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

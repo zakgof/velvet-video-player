@@ -5,10 +5,10 @@ import java.io.File;
 
 import com.zakgof.actr.ActorRef;
 import com.zakgof.actr.ActorSystem;
-import com.zakgof.actr.Actr;
 import com.zakgof.actr.DedicatedThreadScheduler;
 import com.zakgof.velvetvideo.FFMpegVideoLib;
 import com.zakgof.velvetvideo.IVideoLib;
+import com.zakgof.velvetvideo.IVideoLib.IDecodedPacket;
 import com.zakgof.velvetvideo.IVideoLib.IDemuxer;
 
 import javafx.application.Application;
@@ -90,14 +90,16 @@ class DecoderActor {
 	}
 
 	private void decodeFrame() {
-		long nextFrame[] = {0};
-		if (demuxer.nextPacket(frame -> {
-			var bi = frame.image();
-			var image = SwingFXUtils.toFXImage(bi, null);
-			nextFrame[0] = start + frame.nanostamp();
-			MainActr.UI_ACTOR.tell(main -> main.displayFrame(image));
-		}, null)) {
-			Actr.<DecoderActor>current().later(DecoderActor::decodeFrame, (nextFrame[0] - System.nanoTime()) / 1000000L);
+		IDecodedPacket packet = demuxer.nextPacket();
+		if (packet != null) {
+			if (packet.isVideo() && packet.video().stream() == demuxer.videos().get(0)) {
+				var frame = packet.video();
+				var bi = frame.image();
+				var image = SwingFXUtils.toFXImage(bi, null);
+				var nextFrame = start + frame.nanostamp();
+				MainActr.DECODER_ACTOR.later(DecoderActor::decodeFrame, (nextFrame - System.nanoTime()) / 1000000L);
+				MainActr.UI_ACTOR.tell(main -> main.displayFrame(image));	
+			}
 		}
 	}
 }

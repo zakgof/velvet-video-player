@@ -56,19 +56,25 @@ public class MainSimple extends Application {
 		var lib = new FFMpegVideoLib();
 		try (var demuxer = lib.demuxer(new File(filename))) {
 			var start = System.nanoTime();
-			while (!Thread.currentThread().isInterrupted() && demuxer.nextPacket(frame -> {
-				var nanostamp = frame.nanostamp();
-				var bi = frame.image();
-				var image = SwingFXUtils.toFXImage(bi, null);
-				var wait = start + nanostamp - System.nanoTime();
-				if (wait > 0)
-					try {
-						Thread.sleep(wait / 1000000L, (int) (wait % 1000000L));
-					} catch (InterruptedException e) {
-						Thread.currentThread().interrupt();
-					}
-				Platform.runLater(() -> displayImage(image));
-			}, null));
+			for (var packet : demuxer) {
+				if (Thread.currentThread().isInterrupted()) {
+					return;
+				}
+				if (packet.isVideo() && packet.video().stream() == demuxer.videos().get(0)) {
+					var frame = packet.video();
+					var nanostamp = frame.nanostamp();
+					var bi = frame.image();
+					var image = SwingFXUtils.toFXImage(bi, null);
+					var wait = start + nanostamp - System.nanoTime();
+					if (wait > 0)
+						try {
+							Thread.sleep(wait / 1000000L, (int) (wait % 1000000L));
+						} catch (InterruptedException e) {
+							Thread.currentThread().interrupt();
+						}
+					Platform.runLater(() -> displayImage(image));
+				}
+			};
 		}
 	}
 

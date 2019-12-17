@@ -2,7 +2,8 @@ package com.zakgof.velvetvideo.player;
 
 import java.io.File;
 
-import com.zakgof.velvetvideo.FFMpegVideoLib;
+import com.zakgof.velvetvideo.MediaType;
+import com.zakgof.velvetvideo.impl.VelvetVideoLib;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -53,15 +54,15 @@ public class MainSimple extends Application {
 	}
 
 	void worker(String filename) {
-		var lib = new FFMpegVideoLib();
+		var lib = VelvetVideoLib.getInstance();
 		try (var demuxer = lib.demuxer(new File(filename))) {
 			var start = System.nanoTime();
 			for (var packet : demuxer) {
 				if (Thread.currentThread().isInterrupted()) {
 					return;
 				}
-				if (packet.isVideo() && packet.video().stream() == demuxer.videos().get(0)) {
-					var frame = packet.video();
+				if (packet.is(MediaType.Video) && packet.asVideo().stream() == demuxer.videoStreams().get(0)) {
+					var frame = packet.asVideo();
 					var nanostamp = frame.nanostamp();
 					var bi = frame.image();
 					var image = SwingFXUtils.toFXImage(bi, null);
@@ -75,6 +76,8 @@ public class MainSimple extends Application {
 					Platform.runLater(() -> displayImage(image));
 				}
 			};
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

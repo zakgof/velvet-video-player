@@ -3,8 +3,8 @@ package com.zakgof.velvetvideo.player;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import com.zakgof.velvetvideo.IDecoderVideoStream;
-import com.zakgof.velvetvideo.IEncoderVideoStream;
+import com.zakgof.velvetvideo.IVideoDecoderStream;
+import com.zakgof.velvetvideo.IVideoEncoderStream;
 import com.zakgof.velvetvideo.IVideoEncoderBuilder;
 import com.zakgof.velvetvideo.impl.VelvetVideoLib;
 
@@ -66,7 +66,7 @@ public class Main {
 
 		BufferedImage[] images = new BufferedImage[20];
 		try (var demuxer = lib.demuxer(f)) {
-			IDecoderVideoStream videoStream = demuxer.videoStreams().get(0);
+			IVideoDecoderStream videoStream = demuxer.videoStreams().get(0);
 			videoStream.seek(5000);
 			for (int i = 0; i < images.length; i++) {
 				BufferedImage image = videoStream.nextFrame().image();
@@ -88,7 +88,7 @@ public class Main {
 
 		long start = System.currentTimeMillis();
 		try (var muxer = lib.muxer("avi").videoEncoder(builder.bitrate(1000000)).build(out)) {
-			IEncoderVideoStream encoder = muxer.videoEncoder(0);
+			IVideoEncoderStream encoder = muxer.videoEncoder(0);
 			int fr = 0;
 			for (BufferedImage image : images) {
 				encoder.encode(image);

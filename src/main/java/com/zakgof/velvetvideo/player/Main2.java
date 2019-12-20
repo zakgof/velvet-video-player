@@ -14,7 +14,7 @@ import javax.sound.sampled.SourceDataLine;
 import com.zakgof.velvetvideo.Direction;
 import com.zakgof.velvetvideo.IAudioFrame;
 import com.zakgof.velvetvideo.IDecodedPacket;
-import com.zakgof.velvetvideo.IDecoderAudioStream;
+import com.zakgof.velvetvideo.IAudioDecoderStream;
 import com.zakgof.velvetvideo.IDemuxer;
 import com.zakgof.velvetvideo.MediaType;
 import com.zakgof.velvetvideo.impl.VelvetVideoLib;
@@ -46,7 +46,7 @@ public class Main2 {
 				"D:\\Download\\I.Am.Mother-6.9.mkv"))) {
 		//		"D:\\Download\\Mr.Robot.S01.720p.BDRip.3xRus.Eng.HDCLUB\\Mr.Robot.S01E01.720p.BDRip.3xRus.Eng.HDCLUB.mkv"))) {
 
-			IDecoderAudioStream stream = demuxer.audioStreams().get(0);
+			IAudioDecoderStream stream = demuxer.audioStreams().get(0);
 			AudioFormat format = stream.properties().format();
 
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);

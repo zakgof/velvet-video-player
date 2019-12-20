@@ -172,11 +172,6 @@ public class MainRx extends Application {
 					emitter.onComplete();
 				} else {
 					System.out.println("decoder: fetch a packet " + packet.type());
-					if (packet.nanostamp() == 14431000000L) {
-						System.err.println("decoder: PAUSE");
-						Thread.sleep(2000);
-						System.err.println("decoder: PAUSE END");
-					}
 					emitter.onNext(packet);
 				}
 			}

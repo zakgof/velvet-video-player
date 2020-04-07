@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.zakgof:velvet-video:0.5.0'
-    implementation 'com.github.zakgof:velvet-video-natives:0.2.6.full'
+    implementation 'com.github.zakgof:velvet-video:0.5.1'
+    implementation 'com.github.zakgof:velvet-video-natives:0.2.7.full'
     implementation 'com.github.zakgof:actr:0.2.1'
     implementation 'com.github.zakgof:tools:0.7.0'
     
